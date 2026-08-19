@@ -44,20 +44,27 @@
             </div>
         </section>
 
-        <!-- 2. المصحف الشريف المصور -->
-        <section class="card quran-card">
-            <h2>📖 المصحف الشريف (تصفح بالصفحات)</h2>
-            <div class="quran-nav">
-                <button class="btn btn-nav" onclick="prevPage()">▶ الصفحة السابقة</button>
-                <div class="page-selector">
-                    صفحة <input type="number" id="page-num-input" value="1" min="1" max="604" onchange="jumpToPage(this.value)"> من 604
-                </div>
-                <button class="btn btn-nav" onclick="nextPage()">الصفحة التالية ◀</button>
-            </div>
-            <div class="quran-viewer-container" id="quran-viewer">
-                <img id="quran-page-img" src="https://quran.ksu.edu.sa/png_big/1.png" alt="صفحة المصحف" class="quran-page-img">
-            </div>
-        </section>
+        <!-- المصحف الشريف المصور -->
+<section class="card quran-card">
+    <h2>📖 المصحف الشريف (تصفح بالصفحات)</h2>
+    <div class="quran-nav">
+        <button class="btn btn-nav" onclick="prevPage()">▶ الصفحة السابقة</button>
+        
+        <div class="surah-selector">
+            <select id="surah-select" onchange="jumpToSurah(this.value)">
+                <option value="">-- اختر السورة --</option>
+            </select>
+        </div>
+
+        <div class="page-selector">
+            صفحة <input type="number" id="page-num-input" value="1" min="1" max="604" onchange="jumpToPage(this.value)"> من 604
+        </div>
+        <button class="btn btn-nav" onclick="nextPage()">الصفحة التالية ◀</button>
+    </div>
+    <div class="quran-viewer-container" id="quran-viewer">
+        <img id="quran-page-img" src="https://quran.ksu.edu.sa/png_big/1.png" alt="صفحة المصحف" class="quran-page-img">
+    </div>
+</section>
 
         <!-- 3. المسبحة الإلكترونية الفاخرة -->
         <section class="card tasbeeh-card">
