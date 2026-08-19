@@ -46,6 +46,22 @@ function populateSurahSelect() {
 }
 
 // 1. مواقيت الصلاة وتخزينها لحالة عدم وجود إنترنت
+// دالة لتحويل الوقت من نظام 24 ساعة إلى 12 ساعة
+function format12Hour(timeStr) {
+    if (!timeStr || timeStr === '--:--') return '--:--';
+    
+    // استخراج الساعات والدقائق (في حال كان النص يحتوي على وقت فقط مثل "04:30")
+    let [hours, minutes] = timeStr.split(' ')[0].split(':');
+    hours = parseInt(hours, 10);
+    
+    const period = hours >= 12 ? 'م' : 'ص';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // الساعة 0 تصبح 12
+    
+    return `${hours}:${minutes} ${period}`;
+}
+
+// 1. مواقيت الصلاة وتخزينها لحالة عدم وجود إنترنت
 function fetchGazaPrayerTimes() {
     fetch(`https://api.aladhan.com/v1/timings?latitude=${GAZA_LAT}&longitude=${GAZA_LON}&method=5`)
         .then(res => res.json())
@@ -72,12 +88,12 @@ function fetchGazaPrayerTimes() {
 }
 
 function applyPrayerTimes(t, dateStr) {
-    document.getElementById('fajr').innerText = t.Fajr;
-    document.getElementById('sunrise').innerText = t.Sunrise;
-    document.getElementById('dhuhr').innerText = t.Dhuhr;
-    document.getElementById('asr').innerText = t.Asr;
-    document.getElementById('maghrib').innerText = t.Maghrib;
-    document.getElementById('isha').innerText = t.Isha;
+    document.getElementById('fajr').innerText = format12Hour(t.Fajr);
+    document.getElementById('sunrise').innerText = format12Hour(t.Sunrise);
+    document.getElementById('dhuhr').innerText = format12Hour(t.Dhuhr);
+    document.getElementById('asr').innerText = format12Hour(t.Asr);
+    document.getElementById('maghrib').innerText = format12Hour(t.Maghrib);
+    document.getElementById('isha').innerText = format12Hour(t.Isha);
     document.getElementById('hijri-date').innerText = dateStr;
 }
 
