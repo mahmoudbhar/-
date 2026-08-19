@@ -1,5 +1,6 @@
-const CACHE_NAME = 'quran-gaza-v3';
+const CACHE_NAME = 'quran-gaza-v4';
 
+// تثبيت ملفات الموقع والمصادر الأساسية
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -16,12 +17,13 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
+// استراتيجية Cache First مع حفظ صور صفحات القرآن تلقائياً
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       if (cachedResponse) return cachedResponse;
       return fetch(event.request).then(response => {
-        if (!response || response.status !== 200 || (response.type !== 'basic' && !event.request.url.includes('quran.ksu.edu.sa'))) {
+        if (!response || response.status !== 200) {
           return response;
         }
         const responseToCache = response.clone();
