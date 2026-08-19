@@ -33,3 +33,10 @@ self.addEventListener('fetch', event => {
     }).catch(() => caches.match('./index.html'))
   );
 });
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW Registered!', reg))
+      .catch(err => console.error('SW Failure!', err));
+  });
+}
