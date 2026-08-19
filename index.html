@@ -7,13 +7,12 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1b4332">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header class="hero-section">
         <div class="profile-card">
-            <!-- الصورة: يمكنك تغيير الرابط إلى اسم صورتك المحلية مثل images/photo.jpg -->
             <img src="https://alsabreen.gitlab.io/images/mohamedramzey.jpg" alt="الشهيد محمد رمزي أبو حصيرة" class="profile-img" id="hero-img">
             <h1>الشهيد محمد رمزي أبو حصيرة</h1>
             <p class="subtitle">صدقة جارية - نسأل الله أن يتقبله في الشهداء والصالحين</p>
@@ -28,12 +27,12 @@
 
     <main class="container">
 
-        <!-- مواقيت الصلاة -->
+        <!-- 1. مواقيت الصلاة لمدينة غزة -->
         <section class="card prayer-card">
-            <h2>🕌 مواقيت الصلاة</h2>
+            <h2>🕌 مواقيت الصلاة - مدينة غزة (فلسطين)</h2>
             <div class="location-info">
-                <span id="location-name">جاري تحديد الموقع...</span>
-                <span id="hijri-date">--</span>
+                <span>📍 مدينة غزة</span>
+                <span id="hijri-date">جاري التحميل...</span>
             </div>
             <div class="prayer-times-grid">
                 <div class="prayer-box"><span>الفجر</span><strong id="fajr">--:--</strong></div>
@@ -45,60 +44,100 @@
             </div>
         </section>
 
-        <!-- المصحف الشريف لقراءة السور -->
+        <!-- 2. المصحف الشريف المصور -->
         <section class="card quran-card">
-            <h2>📖 القرآن الكريم</h2>
-            <div class="quran-controls">
-                <select id="surah-select" onchange="loadSurah()">
-                    <option value="">جاري تحميل فهرس السور...</option>
-                </select>
+            <h2>📖 المصحف الشريف (تصفح بالصفحات)</h2>
+            <div class="quran-nav">
+                <button class="btn btn-nav" onclick="prevPage()">▶ الصفحة السابقة</button>
+                <div class="page-selector">
+                    صفحة <input type="number" id="page-num-input" value="1" min="1" max="604" onchange="jumpToPage(this.value)"> من 604
+                </div>
+                <button class="btn btn-nav" onclick="nextPage()">الصفحة التالية ◀</button>
             </div>
-            <div id="surah-container" class="surah-display">
-                <p class="placeholder-text">اختر سورة من القائمة لقراءتها</p>
+            <div class="quran-viewer-container" id="quran-viewer">
+                <img id="quran-page-img" src="https://quran.ksu.edu.sa/png_big/1.png" alt="صفحة المصحف" class="quran-page-img">
             </div>
         </section>
 
-        <!-- المسبحة الإلكترونية -->
+        <!-- 3. المسبحة الإلكترونية الفاخرة -->
         <section class="card tasbeeh-card">
-            <h2>📿 المسبحة الإلكترونية</h2>
-            <select id="zekr-select">
-                <option value="سبحان الله">سبحان الله</option>
-                <option value="الحمد لله">الحمد لله</option>
-                <option value="لا إله إلا الله">لا إله إلا الله</option>
-                <option value="الله أكبر">الله أكبر</option>
-                <option value="أستغفر الله">أستغفر الله</option>
-                <option value="اللهم صلّ وسلم على نبينا محمد">اللهم صلّ وسلم على نبينا محمد</option>
-            </select>
-            <div class="counter-display" id="counter">0</div>
-            <button class="btn btn-primary" onclick="countUp()">اضغط للعد</button>
-            <button class="btn btn-secondary" onclick="resetCount()">إعادة ضبط</button>
+            <h2>📿 المسبحة الإلكترونية الفاخرة</h2>
+            <div class="tasbeeh-wrapper">
+                <div class="select-box">
+                    <label>اختر الذكر:</label>
+                    <select id="zekr-select" onchange="resetCount()">
+                        <option value="سبحان الله">سبحان الله</option>
+                        <option value="الحمد لله">الحمد لله</option>
+                        <option value="لا إله إلا الله">لا إله إلا الله</option>
+                        <option value="الله أكبر">الله أكبر</option>
+                        <option value="أستغفر الله واتوب إليه">أستغفر الله وأتوب إليه</option>
+                        <option value="لا حول ولا قوة إلا بالله">لا حول ولا قوة إلا بالله</option>
+                        <option value="اللهم صلّ وسلم على نبينا محمد">اللهم صلّ وسلم على نبينا محمد</option>
+                        <option value="سبحان الله وبحمده، سبحان الله العظيم">سبحان الله وبحمده، سبحان الله العظيم</option>
+                    </select>
+                </div>
+                <div class="counter-ring" onclick="countUp()">
+                    <div class="counter-inner">
+                        <span class="counter-label">العدد</span>
+                        <div class="counter-display" id="counter">0</div>
+                        <span class="tap-hint">اضغط للعد</span>
+                    </div>
+                </div>
+                <div class="tasbeeh-tools">
+                    <button class="btn btn-reset" onclick="resetCount()">🔄 إعادة ضبط</button>
+                </div>
+            </div>
         </section>
 
-        <!-- الأذكار -->
+        <!-- 4. موسوعة أذكار الصباح والمساء -->
         <section class="card azkar-card">
-            <h2>📜 الأذكار وحصن المسلم</h2>
-            <div class="azkar-group">
-                <h3>أذكار الصباح</h3>
-                <div class="azkar-item">أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.</div>
-                <div class="azkar-item">اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ.</div>
+            <h2>📜 موسوعة الأذكار الشاملة</h2>
+            
+            <div class="azkar-tabs">
+                <button class="tab-btn active" onclick="switchAzkarTab('sabah')">☀️ أذكار الصباح</button>
+                <button class="tab-btn" onclick="switchAzkarTab('massa')">🌙 أذكار المساء</button>
             </div>
-            <div class="azkar-group">
-                <h3>أذكار المساء</h3>
-                <div class="azkar-item">أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ.</div>
-                <div class="azkar-item">اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ.</div>
-            </div>
-        </section>
 
-        <!-- البث المباشر والإذاعات -->
-        <section class="card media-card">
-            <h2>📻 إذاعة القرآن الكريم</h2>
-            <div class="audio-stream">
-                <p>إذاعة القرآن الكريم - مكة المكرمة</p>
-                <audio controls src="https://stream.radiojar.com/4wqre23fytzuv"></audio>
+            <div id="azkar-sabah-list" class="azkar-content-list active">
+                <div class="azkar-item">
+                    <p class="azkar-text">آيَةُ الْكُرْسِيِّ: {اللَّهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ...}</p>
+                    <span class="azkar-repeat">تُقال (مرة واحدة) - أُجير من الجن حتى يمسي.</span>
+                </div>
+                <div class="azkar-item">
+                    <p class="azkar-text">سورة الإخلاص، المعوذتين (الفلق والناس).</p>
+                    <span class="azkar-repeat">تُقال (3 مرات) - تكفيه من كل شيء.</span>
+                </div>
+                <div class="azkar-item">
+                    <p class="azkar-text">"أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ..."</p>
+                    <span class="azkar-repeat">تُقال (مرة واحدة)</span>
+                </div>
+                <div class="azkar-item">
+                    <p class="azkar-text">"اللَّهُمَّ أَنْتَ رَبِّي لاَ إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ..." (سيد الاستغفار)</p>
+                    <span class="azkar-repeat">تُقال (مرة واحدة) - من قالها موقناً بها ومات دخل الجنة.</span>
+                </div>
+                <div class="azkar-item">
+                    <p class="azkar-text">"رَضِيتُ بِاللَّهِ رَبًّا، وَبِالإِسْلاَمِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا."</p>
+                    <span class="azkar-repeat">تُقال (3 مرات)</span>
+                </div>
+                <div class="azkar-item">
+                    <p class="azkar-text">"بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ."</p>
+                    <span class="azkar-repeat">تُقال (3 مرات)</span>
+                </div>
             </div>
-            <div class="audio-stream">
-                <p>إذاعة القرآن الكريم - القاهرة</p>
-                <audio controls src="https://stream.radiojar.com/8s5u5tpdtwzuv"></audio>
+
+            <div id="azkar-massa-list" class="azkar-content-list">
+                <div class="azkar-item">
+                    <p class="azkar-text">آيَةُ الْكُرْسِيِّ: {اللَّهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ...}</p>
+                    <span class="azkar-repeat">تُقال (مرة واحدة) - أُجير من الجن حتى يصبح.</span>
+                </div>
+                <div class="azkar-item">
+                    <p class="azkar-text">"أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لاَ إِلَهَ إِلاَّ اللَّهُ..."</p>
+                    <span class="azkar-repeat">تُقال (مرة واحدة)</span>
+                </div>
+                <div class="azkar-item">
+                    <p class="azkar-text">"أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ."</p>
+                    <span class="azkar-repeat">تُقال (3 مرات)</span>
+                </div>
             </div>
         </section>
 
