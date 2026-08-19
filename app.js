@@ -1,58 +1,9 @@
-// --- 1. المسبحة الإلكترونية ---
-let count = 0;
-function countUp() { count++; document.getElementById('counter').innerText = count; }
-function resetCount() { count = 0; document.getElementById('counter').innerText = count; }
+const GAZA_LAT = 31.5017;
+const GAZA_LON = 34.4668;
 
-// --- 2. جلب القرآن الكريم ودعم العمل بدون إنترنت ---
-const surahSelect = document.getElementById('surah-select');
-const surahContainer = document.getElementById('surah-container');
-
-async function fetchSurahs() {
-    try {
-        const res = await fetch('https://api.alquran.cloud/v1/surah');
-        const data = await res.json();
-        surahSelect.innerHTML = '<option value="">-- اختر السورة لقراءتها --</option>';
-        data.data.forEach(surah => {
-            surahSelect.innerHTML += `<option value="${surah.number}">${surah.number}. ${surah.name}</option>`;
-        });
-    } catch (err) {
-        surahSelect.innerHTML = '<option value="">خطأ في تحميل السور أو يعمل بدون شبكة</option>';
-    }
-}
-
-async function loadSurah() {
-    const surahNum = surahSelect.value;
-    if (!surahNum) return;
-    
-    surahContainer.innerHTML = '<p class="placeholder-text">جاري تحميل السورة...</p>';
-
-    try {
-        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
-        const data = await res.json();
-        
-        let surahText = `<h3 style="text-align:center; margin-bottom:15px; color:#1b4332;">${data.data.name}</h3>`;
-        if (surahNum != 1 && surahNum != 9) {
-            surahText += `<p style="text-align:center; font-weight:bold; margin-bottom:15px;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>`;
-        }
-
-        data.data.ayahs.forEach(ayah => {
-            let text = ayah.text;
-            if (surahNum != 1 && ayah.numberInSurah === 1) {
-                text = text.replace("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", "");
-            }
-            surahText += `${text} <span class="aya-number">﴿${ayah.numberInSurah}﴾</span> `;
-        });
-
-        surahContainer.innerHTML = surahText;
-    } catch (err) {
-        surahContainer.innerHTML = '<p class="placeholder-text">عذراً، تحتاج للاتصال بالإنترنت لأول مرة لفتح هذه السورة.</p>';
-    }
-}
-
-// --- 3. مواقيت الصلاة ---
-function getPrayerTimes(lat, lon) {
-    fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=5`)
-        .then(r => r.json())
+function fetchGazaPrayerTimes() {
+    fetch(`https://api.aladhan.com/v1/timings?latitude=${GAZA_LAT}&longitude=${GAZA_LON}&method=5`)
+        .then(res => res.json())
         .then(data => {
             const t = data.data.timings;
             const d = data.data.date;
@@ -63,22 +14,73 @@ function getPrayerTimes(lat, lon) {
             document.getElementById('maghrib').innerText = t.Maghrib;
             document.getElementById('isha').innerText = t.Isha;
             document.getElementById('hijri-date').innerText = `${d.hijri.day} ${d.hijri.month.ar} ${d.hijri.year} هـ`;
+        })
+        .catch(() => {
+            document.getElementById('hijri-date').innerText = 'المواقيت تعمل بدون إنترنت';
         });
 }
 
-function initApp() {
-    fetchSurahs();
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            p => { document.getElementById('location-name').innerText = '📍 موقعك الحالي'; getPrayerTimes(p.coords.latitude, p.coords.longitude); },
-            () => { document.getElementById('location-name').innerText = '📍 التوقيت الافتراضي (القاهرة)'; getPrayerTimes(30.0444, 31.2357); }
-        );
+let currentPage = 1;
+const totalPages = 604;
+const quranImg = document.getElementById('quran-page-img');
+const pageInput = document.getElementById('page-num-input');
+
+function updatePage() {
+    quranImg.src = `https://quran.ksu.edu.sa/png_big/${currentPage}.png`;
+    pageInput.value = currentPage;
+    localStorage.setItem('last_quran_page', currentPage);
+}
+
+function nextPage() {
+    if (currentPage < totalPages) { currentPage++; updatePage(); }
+}
+
+function prevPage() {
+    if (currentPage > 1) { currentPage--; updatePage(); }
+}
+
+function jumpToPage(num) {
+    let p = parseInt(num);
+    if (p >= 1 && p <= totalPages) { currentPage = p; updatePage(); }
+}
+
+let touchStartX = 0;
+let touchEndX = 0;
+const quranViewer = document.getElementById('quran-viewer');
+quranViewer.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+quranViewer.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    if (touchEndX < touchStartX - 50) nextPage();
+    if (touchEndX > touchStartX + 50) prevPage();
+});
+
+let count = 0;
+function countUp() {
+    count++;
+    document.getElementById('counter').innerText = count;
+}
+function resetCount() {
+    count = 0;
+    document.getElementById('counter').innerText = count;
+}
+
+function switchAzkarTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.azkar-content-list').forEach(list => list.classList.remove('active'));
+    if (tab === 'sabah') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('azkar-sabah-list').classList.add('active');
     } else {
-        getPrayerTimes(30.0444, 31.2357);
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('azkar-massa-list').classList.add('active');
     }
 }
 
-window.onload = initApp;
+window.onload = () => {
+    fetchGazaPrayerTimes();
+    const savedPage = localStorage.getItem('last_quran_page');
+    if (savedPage) { currentPage = parseInt(savedPage); updatePage(); }
+};
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');
