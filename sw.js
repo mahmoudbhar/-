@@ -1,31 +1,32 @@
-const CACHE_NAME = 'quran-sadaka-v2';
-const assets = [
-  './',
-  './index.html',
-  './style.css',
-  './app.js',
-  './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap'
-];
+const CACHE_NAME = 'quran-gaza-v3';
 
-self.addEventListener('install', e => {
-  e.waitUntil(
+self.addEventListener('install', event => {
+  event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(assets);
+      return cache.addAll([
+        './',
+        './index.html',
+        './style.css',
+        './app.js',
+        './manifest.json',
+        'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Amiri:wght@400;700&display=swap'
+      ]);
     })
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(res => {
-      return res || fetch(e.request).then(fetchRes => {
-        return caches.open(CACHE_NAME).then(cache => {
-          if (e.request.url.includes('alquran.cloud')) {
-            cache.put(e.request.url, fetchRes.clone());
-          }
-          return fetchRes;
-        });
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(cachedResponse => {
+      if (cachedResponse) return cachedResponse;
+      return fetch(event.request).then(response => {
+        if (!response || response.status !== 200 || (response.type !== 'basic' && !event.request.url.includes('quran.ksu.edu.sa'))) {
+          return response;
+        }
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+        return response;
       });
     }).catch(() => caches.match('./index.html'))
   );
