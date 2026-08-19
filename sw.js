@@ -1,4 +1,4 @@
-const CACHE_NAME = 'quran-gaza-v5';
+const CACHE_NAME = 'quran-gaza-v6';
 
 // تثبيت ملفات الموقع والمصادر الأساسية
 self.addEventListener('install', event => {
